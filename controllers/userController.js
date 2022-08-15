@@ -69,7 +69,7 @@ const verifyUser = async (req, res) => {
         if (!updatedUser) {
             return res.json({ success: false, message: "Error Verifying User." })
         }
-        return res.json({ success: true, message: "User Verified Successfully." })
+        return res.send("<h1>User Verified Successfully.</h1><p>You can now <a href='/login'>login</a>.</p>")
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: "Some Internal Server Error Occured." })
