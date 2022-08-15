@@ -2,17 +2,17 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const ResearchPaperSchema = new Schema({
-    title: { type: String, required: true },
-    authors: { type: Array, required: true },
-    keywords: { type: Array, required: true },
-    abstract: { type: String, required: true },
-    introduction: { type: String, required: true },
-    literature_survey: { type: String, required: true },
-    proposed_work: { type: String, required: true },
-    methodology: { type: String, required: true },
-    experimental_evaluation: { type: String, required: true },
-    conclusion: { type: String, required: true },
-    references: { type: String, required: true },
+    title: { type: String, required: true, default: '' },
+    authors: { type: Array, required: true, default: [] },
+    keywords: { type: Array, required: true, default: [] },
+    abstract: { type: String, required: true, default: '' },
+    introduction: { type: String, required: true, default: '' },
+    literature_survey: { type: String, required: true, default: '' },
+    proposed_work: { type: String, required: true, default: '' },
+    methodology: { type: String, required: true, default: '' },
+    experimental_evaluation: { type: String, required: true, default: '' },
+    conclusion: { type: String, required: true, default: '' },
+    references: { type: String, required: true, default: '' },
     created_at: { type: Number, default: Date.now() },
     updated_at: { type: Number, default: Date.now() }
 })
