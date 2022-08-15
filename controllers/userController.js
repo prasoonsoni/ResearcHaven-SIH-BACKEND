@@ -50,7 +50,7 @@ const loginUser = async (req, res) => {
 			return res.json({ success: false, message: 'User Not Found.' })
 		}
 		if (!user.verified) {
-			return res.json({ success: false, message: 'User Not Verified.' })
+			return res.json({ success: false, message: 'User Not Verified.', verified: false })
 		}
 		const isMatch = await bcrypt.compare(password, user.password)
 		if (!isMatch) {
