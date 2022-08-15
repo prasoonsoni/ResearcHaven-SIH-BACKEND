@@ -14,6 +14,7 @@ app.get('/', (req, res) => {
     res.send('Welcome to SIH Backend API.')
 })
 
+app.use('/api/user', require('./routes/userRoutes'))
 app.listen(port, () => {
     console.log(`Server listening on http://localhost:${port}`)
 })
