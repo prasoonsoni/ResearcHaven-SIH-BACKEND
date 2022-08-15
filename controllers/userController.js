@@ -3,6 +3,7 @@ const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const sendMail = require('../scripts/sendMail')
+const { ObjectId } = require('mongodb')
 
 const createUser = async (req, res) => {
     try {
@@ -75,5 +76,27 @@ const verifyUser = async (req, res) => {
     }
 }
 
+const sendVerificationEmail = async (req, res) => {
+    try {
+        const { email } = req.body
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.json({ success: false, message: "User Not Found." })
+        }
+        if (user.verified) {
+            return res.json({ success: false, message: "User Already Verified." })
+        }
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET)
+        const link = `${process.env.HOST}/api/user/verify/${token}`
+        const mailInfo = await sendMail(user.email, link)
+        if (!mailInfo) {
+            return res.json({ success: false, message: "Error Sending Verification Email." })
+        }
+        return res.json({ success: true, message: "Verification Email Sent Successfully." })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: "Some Internal Server Error Occured." })
+    }
+}
 
-module.exports = { createUser, loginUser, verifyUser }
+module.exports = { createUser, loginUser, verifyUser, sendVerificationEmail }
