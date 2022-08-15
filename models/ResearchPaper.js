@@ -16,7 +16,7 @@ const ResearchPaperSchema = new Schema({
     conclusion: { type: String, required: true, default: '' },
     references: { type: String, required: true, default: '' },
     created_at: { type: Number, default: Date.now() },
-    updated_at: { type: Number, default: Date.now() }
+    updated_at: { type: Number, default: Date.now() },
 })
 
 module.exports = mongoose.model('ResearchPaper', ResearchPaperSchema)
