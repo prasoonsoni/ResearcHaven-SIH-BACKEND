@@ -53,4 +53,36 @@ const editResearchPaper = async (req, res) => {
     }
 }
 
-module.exports = { createResearchPaper, editResearchPaper }
+const deleteResearchPaper = async (req, res) => {
+    try {
+        const user_id = new ObjectId(req.user._id)
+        const research_paper_id = new ObjectId(req.params.id)
+        if (!user_id || !research_paper_id) {
+            return res.json({ success: false, message: 'User Or Research Paper Not Found.' })
+        }
+        if (!user_id) {
+            return res.json({ success: false, message: 'User Not Found.' })
+        }
+        const researchPaper = await ResearchPaper.findOne({ _id: research_paper_id })
+        if (!researchPaper) {
+            return res.json({ success: false, message: 'Research Paper Not Found.' })
+        }
+        if (researchPaper.user_id.toString() !== user_id.toString()) {
+            return res.json({ success: false, message: 'You Do Not Have Permission To Delete This Research Paper.' })
+        }
+        const deleteResearchPaper = await ResearchPaper.deleteOne({ _id: research_paper_id })
+        if (!deleteResearchPaper.acknowledged) {
+            return res.json({ success: false, message: 'Error Deleting Research Paper.' })
+        }
+        const updateUser = await User.updateOne({ _id: user_id }, { $pull: { research_papers: research_paper_id } })
+        if (!updateUser.acknowledged) {
+            return res.json({ success: false, message: 'Error Updating User.' })
+        }
+        return res.json({ success: true, message: 'Research Paper Deleted Successfully.' })
+    } catch (error) {
+        console.log(error.message)
+        res.json({ success: false, message: 'Some Internal Server Error Occured.', })
+    }
+}
+
+module.exports = { createResearchPaper, editResearchPaper, deleteResearchPaper }
