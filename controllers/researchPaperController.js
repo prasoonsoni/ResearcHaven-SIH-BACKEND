@@ -85,4 +85,16 @@ const deleteResearchPaper = async (req, res) => {
     }
 }
 
-module.exports = { createResearchPaper, editResearchPaper, deleteResearchPaper }
+const getAllPublishedResearchPapers = async (req, res) => {
+    try {
+        const researchPapers = await ResearchPaper.find({ published: true })
+        if (!researchPapers) {
+            return res.json({ success: false, message: 'No Published Research Papers Found.' })
+        }
+        return res.json({ success: true, message: 'Published Research Papers Found.', researchPapers })
+    } catch (error) {
+        console.log(error.message)
+        res.json({ success: false, message: 'Some Internal Server Error Occured.', })
+    }
+}
+module.exports = { createResearchPaper, editResearchPaper, deleteResearchPaper, getAllPublishedResearchPapers }
