@@ -30,6 +30,29 @@ const createUser = async (req, res) => {
     }
 }
 
+const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.json({ success: false, message: "User Not Found." })
+        }
+        if (!user.verified) {
+            return res.json({ success: false, message: "User Not Verified." })
+        }
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.json({ success: false, message: "Incorrect Password." })
+        }
+        const data = { user: { _id: user._id } }
+        const token = jwt.sign(data, process.env.JWT_SECRET)
+        return res.json({ success: true, message: "User Logged In Successfully.", token })
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: "Some Internal Server Error Occured." })
+    }
+}
+
 const verifyUser = async (req, res) => {
     try {
         const token = req.params.token
@@ -53,4 +76,4 @@ const verifyUser = async (req, res) => {
 }
 
 
-module.exports = { createUser, verifyUser }
+module.exports = { createUser, loginUser, verifyUser }
