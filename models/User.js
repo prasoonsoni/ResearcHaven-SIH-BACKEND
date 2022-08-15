@@ -7,6 +7,7 @@ const UserSchema = new Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     research_papers: { type: Array, required: true },
+    verified: { type: Boolean, required: true, default: false },
     created_at: { type: Number, default: Date.now() },
     updated_at: { type: Number, default: Date.now() }
 })
