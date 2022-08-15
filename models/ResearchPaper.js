@@ -15,6 +15,7 @@ const ResearchPaperSchema = new Schema({
 	experimental_evaluation: { type: String, default: '' },
 	conclusion: { type: String, default: '' },
 	references: { type: String, default: '' },
+	published: { type: Boolean, default: false },
 	created_at: { type: Number, default: Date.now() },
 	updated_at: { type: Number, default: Date.now() }
 })
