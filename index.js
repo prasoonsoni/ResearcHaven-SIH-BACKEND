@@ -15,6 +15,8 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/user', require('./routes/userRoutes'))
+app.use('/api/researchpaper', require('./routes/researchPaperRoutes'))
+
 app.listen(port, () => {
 	console.log(`Server listening on http://localhost:${port}`)
 })

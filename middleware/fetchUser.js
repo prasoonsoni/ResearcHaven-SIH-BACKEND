@@ -10,7 +10,7 @@ const fetchuser = async (req, res, next) => {
 		})
 	}
 	try {
-		const data = jwt.verify(token, process.env.JWT_SECRET_KEY)
+		const data = jwt.verify(token, process.env.JWT_SECRET)
 		req.user = data.user
 		next()
 	} catch (error) {
