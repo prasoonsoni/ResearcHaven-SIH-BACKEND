@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const ResearchPaperSchema = new Schema({
+    user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
     title: { type: String, required: true, default: '' },
     authors: { type: Array, required: true, default: [] },
     keywords: { type: Array, required: true, default: [] },
