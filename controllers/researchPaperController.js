@@ -5,6 +5,10 @@ const User = require('../models/user')
 const createResearchPaper = async (req, res) => {
     try {
         const user_id = new ObjectId(req.user._id)
+        if (!user_id) {
+            return res.json({ success: false, message: 'User Not Found.' })
+        }
+
         const {
             title,
             authors,
@@ -19,6 +23,7 @@ const createResearchPaper = async (req, res) => {
             references,
         } = req.body
         const researchPaper = await ResearchPaper.create({
+            user_id,
             title,
             authors,
             keywords,
@@ -37,6 +42,10 @@ const createResearchPaper = async (req, res) => {
                 message: 'Error Creating Research Paper.',
             })
         }
+        return res.json({
+            success: true,
+            message: 'Research Paper Created Successfully.',
+        })
     } catch (error) {
         console.log(error.message)
         res.json({
