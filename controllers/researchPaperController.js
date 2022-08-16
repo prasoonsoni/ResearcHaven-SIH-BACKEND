@@ -97,4 +97,21 @@ const getAllPublishedResearchPapers = async (req, res) => {
         res.json({ success: false, message: 'Some Internal Server Error Occured.', })
     }
 }
-module.exports = { createResearchPaper, editResearchPaper, deleteResearchPaper, getAllPublishedResearchPapers }
+
+const getAllPublishedResearchPapersByUser = async (req, res) => {
+    try {
+        const user_id = new ObjectId(req.user._id)
+        if (!user_id) {
+            return res.json({ success: false, message: 'User Not Found.' })
+        }
+        const researchPapers = await ResearchPaper.find({ user_id, published: true })
+        if (!researchPapers) {
+            return res.json({ success: false, message: 'No Published Research Papers Found.' })
+        }
+        return res.json({ success: true, message: 'Published Research Papers Found.', researchPapers })
+    } catch (error) {
+        console.log(error.message)
+        res.json({ success: false, message: 'Some Internal Server Error Occured.', })
+    }
+}
+module.exports = { createResearchPaper, editResearchPaper, deleteResearchPaper, getAllPublishedResearchPapers, getAllPublishedResearchPapersByUser }
