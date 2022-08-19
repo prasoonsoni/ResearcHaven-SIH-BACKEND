@@ -155,10 +155,7 @@ const deleteResearchPaper = async (req, res) => {
 const getAllPublishedResearchPapers = async (req, res) => {
     try {
         const researchPapers = await ResearchPaper.find({ published: true })
-        if (!researchPapers) {
-            return res.json({ success: false, message: 'No Published Research Papers Found.' })
-        }
-        return res.json({ success: true, message: 'Published Research Papers Found.', researchPapers })
+        return res.json({ success: true, message: researchPapers })
     } catch (error) {
         console.log(error.message)
         res.json({ success: false, message: 'Some Internal Server Error Occured.' })
@@ -172,10 +169,7 @@ const getAllPublishedResearchPapersByUser = async (req, res) => {
             return res.json({ success: false, message: 'User Not Found.' })
         }
         const researchPapers = await ResearchPaper.find({ user_id, published: true })
-        if (!researchPapers) {
-            return res.json({ success: false, message: 'No Published Research Papers Found.' })
-        }
-        return res.json({ success: true, message: 'Published Research Papers Found.', researchPapers })
+        return res.json({ success: true, message: researchPapers })
     } catch (error) {
         console.log(error.message)
         res.json({ success: false, message: 'Some Internal Server Error Occured.' })
