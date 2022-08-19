@@ -1,9 +1,9 @@
 require('dotenv').config()
-const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const sendMail = require('../scripts/sendMail')
 const { ObjectId } = require('mongodb')
+const sendMail = require('../scripts/sendMail')
+const User = require('../models/User')
 
 const createUser = async (req, res) => {
 	try {
@@ -74,7 +74,7 @@ const loginUser = async (req, res) => {
 
 const verifyUser = async (req, res) => {
 	try {
-		const token = req.params.token
+		const { token } = req.params
 		const data = jwt.verify(token, process.env.JWT_SECRET)
 		const user = await User.findOne({ _id: data._id })
 		if (!user) {
@@ -180,4 +180,11 @@ const getUserById = async (req, res) => {
 	}
 }
 
-module.exports = { createUser, loginUser, verifyUser, sendVerificationEmail, getUser, getUserById }
+module.exports = {
+	createUser,
+	loginUser,
+	verifyUser,
+	sendVerificationEmail,
+	getUser,
+	getUserById
+}

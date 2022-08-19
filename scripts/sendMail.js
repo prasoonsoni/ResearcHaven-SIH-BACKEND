@@ -1,5 +1,6 @@
 require('dotenv').config()
 const nodemailer = require('nodemailer')
+
 const sendMail = async (to, url) => {
 	try {
 		const transporter = nodemailer.createTransport({
@@ -11,7 +12,7 @@ const sendMail = async (to, url) => {
 		})
 		const mailOptions = {
 			from: `"Web Crawlers 👨‍💻 <${process.env.EMAIL}>`,
-			to: to,
+			to,
 			subject: 'Do Not Reply - Email Verification ✔️',
 			html: `<h1>Welcome to the Research Paper Portal</h1>
                     <p>Hi there,</p>

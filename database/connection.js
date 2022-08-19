@@ -1,6 +1,7 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
-const MONGO_URI = process.env.MONGO_URI
+
+const { MONGO_URI } = process.env
 
 const connectToDatabase = () => {
 	try {
@@ -16,7 +17,7 @@ const connectToDatabase = () => {
 			}
 		)
 	} catch (err) {
-		console.log('Could not connect: ' + err)
+		console.log(`Could not connect: ${err}`)
 	}
 	const dbConnection = mongoose.connection
 
