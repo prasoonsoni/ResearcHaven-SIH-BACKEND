@@ -140,4 +140,44 @@ const sendVerificationEmail = async (req, res) => {
 	}
 }
 
-module.exports = { createUser, loginUser, verifyUser, sendVerificationEmail }
+const getUser = async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.user._id }).select('-password')
+		if (!user) {
+			return res.json({ success: false, message: 'User Not Found.' })
+		}
+		return res.json({
+			success: true,
+			message: 'User Found Successfully.',
+			user
+		})
+	} catch (error) {
+		console.log(error.message)
+		res.json({
+			success: false,
+			message: 'Some Internal Server Error Occured.'
+		})
+	}
+}
+
+const getUserById = async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.params.id }).select('-password')
+		if (!user) {
+			return res.json({ success: false, message: 'User Not Found.' })
+		}
+		return res.json({
+			success: true,
+			message: 'User Found Successfully.',
+			user
+		})
+	} catch (error) {
+		console.log(error.message)
+		res.json({
+			success: false,
+			message: 'Some Internal Server Error Occured.'
+		})
+	}
+}
+
+module.exports = { createUser, loginUser, verifyUser, sendVerificationEmail, getUser, getUserById }
