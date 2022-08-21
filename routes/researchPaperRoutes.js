@@ -10,5 +10,6 @@ router.delete('/delete/:id', fetchUser, researchPaperController.deleteResearchPa
 router.get('/published', researchPaperController.getAllPublishedResearchPapers)
 router.get('/published-by-user', fetchUser, researchPaperController.getAllPublishedResearchPapersByUser)
 router.get('/draft-research-papers', fetchUser, researchPaperController.getDraftResearchPapers)
+router.get('/draft/:id', fetchUser, researchPaperController.getDraftById)
 
 module.exports = router
