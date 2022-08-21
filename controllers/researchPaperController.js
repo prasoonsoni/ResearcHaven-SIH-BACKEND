@@ -45,7 +45,7 @@ const createResearchPaper = async (req, res) => {
         if (!updateUser.acknowledged) {
             return res.json({ success: false, message: 'Error Updating User.' })
         }
-        return res.json({ success: true, message: 'Research Paper Created Successfully.' })
+        return res.json({ success: true, message: { id: researchPaper._id } })
     } catch (error) {
         console.log(error.message)
         res.json({ success: false, message: 'Some Internal Server Error Occured.' })
@@ -189,6 +189,8 @@ const getDraftResearchPapers = async (req, res) => {
         res.json({ success: false, message: 'Some Internal Server Error Occured.' })
     }
 }
+
+
 
 module.exports = {
     createResearchPaper,
