@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "This is the backend of our SIH Project. Made and maintained by Team Web Crawlers.",
 	"main": "index.js",
+	"type": "module",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format:check": "prettier --check .",
@@ -26,6 +27,7 @@
 		"cors": "^2.8.5",
 		"dotenv": "^16.0.1",
 		"express": "^4.18.1",
+		"ipfs-http-client": "^57.0.3",
 		"jsonwebtoken": "^8.5.1",
 		"mongodb": "^4.8.1",
 		"mongoose": "^6.5.2",

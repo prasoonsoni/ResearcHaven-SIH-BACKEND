@@ -1,5 +1,6 @@
-require('dotenv').config()
-const jwt = require('jsonwebtoken')
+import dotenv from 'dotenv'
+import jwt from 'jsonwebtoken'
+dotenv.config()
 
 const fetchuser = async (req, res, next) => {
 	const token = req.header('auth-token')
@@ -22,4 +23,4 @@ const fetchuser = async (req, res, next) => {
 	}
 }
 
-module.exports = fetchuser
+export default fetchuser

@@ -1,8 +1,7 @@
-const express = require('express')
-
+import express from 'express'
 const router = express.Router()
-const userController = require('../controllers/userController')
-const fetchUser = require('../middleware/fetchUser')
+import userController from '../controllers/userController.js'
+import fetchUser from '../middleware/fetchUser.js'
 
 router.post('/create', userController.createUser)
 router.post('/login', userController.loginUser)
@@ -11,4 +10,4 @@ router.post('/send-verify-mail', userController.sendVerificationEmail)
 router.get('/', fetchUser, userController.getUser)
 router.get('/:id', userController.getUserById)
 
-module.exports = router
+export default router

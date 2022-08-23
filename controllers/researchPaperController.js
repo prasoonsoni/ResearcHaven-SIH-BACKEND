@@ -1,6 +1,9 @@
-const { ObjectId } = require('mongodb')
-const ResearchPaper = require('../models/ResearchPaper')
-const User = require('../models/User')
+import { ObjectId } from 'mongodb'
+import ResearchPaper from '../models/ResearchPaper.js'
+import User from '../models/User.js'
+import { create } from'ipfs-http-client'
+
+const ipfs = create({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
 
 const createResearchPaper = async (req, res) => {
     try {
@@ -218,12 +221,66 @@ const getDraftById = async (req, res) => {
     }
 }
 
-module.exports = {
+const submitPaper = async (req, res) => {
+    try {
+        const user_id = new ObjectId(req.user._id)
+        const research_paper_id = new ObjectId(req.params.id)
+        if (!user_id || !research_paper_id) {
+            return res.json({ success: false, message: 'User Or Research Paper Not Found.' })
+        }
+        if (!user_id) {
+            return res.json({ success: false, message: 'User Not Found.' })
+        }
+        const researchPaper = await ResearchPaper.findOne({ _id: research_paper_id }).select('-published').select('')
+        const user = await User.findOne({ _id: user_id })
+        if (!user) {
+            return res.json({ success: false, message: 'User Not Found.' })
+        }
+        if (!researchPaper) {
+            return res.json({ success: false, message: 'Research Paper Not Found.' })
+        }
+        if (researchPaper.user_id.toString() !== user_id.toString()) {
+            return res.json({
+                success: false,
+                message: 'You Do Not Have Permission To View This Research Paper.'
+            })
+        }
+        console.log(JSON.stringify(researchPaper))
+
+        const { cid } = await ipfs.add(JSON.stringify(researchPaper))
+        if (!cid) {
+            return res.json({ success: false, message: 'Error Uploading Paper To IPFS.' })
+        }
+        const updateResearchPaper = await ResearchPaper.updateOne(
+            { _id: research_paper_id },
+            { $set: { cid: cid, published: true } }
+        )
+        if (!updateResearchPaper.acknowledged) {
+            return res.json({ success: false, message: 'Error Updating Research Paper.' })
+        }
+        const updateUser = await User.updateOne(
+            { _id: user_id },
+            {
+                $push: { published_research_papers: cid },
+                $pull: { research_papers: research_paper_id }
+            }
+        )
+        if (!updateUser.acknowledged) {
+            return res.json({ success: false, message: 'Error Updating Research Paper.' })
+        }
+        return res.json({ success: true, message: 'Paper Uploaded Successfully.', data: cid })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: 'Some Internal Server Error Occured.' })
+    }
+}
+export default {
     createResearchPaper,
     editResearchPaper,
     deleteResearchPaper,
     getAllPublishedResearchPapers,
     getAllPublishedResearchPapersByUser,
     getDraftResearchPapers,
-    getDraftById
+    getDraftById,
+    submitPaper
 }

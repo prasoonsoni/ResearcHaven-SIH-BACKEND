@@ -1,10 +1,10 @@
-require('dotenv').config()
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
-const { ObjectId } = require('mongodb')
-const sendMail = require('../scripts/sendMail')
-const User = require('../models/User')
-
+import dotenv from "dotenv"
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+import User from '../models/User.js'
+import sendMail from '../scripts/sendMail.js'
+import { ObjectId } from 'mongodb'
+dotenv.config()
 const createUser = async (req, res) => {
 	try {
 		const { first_name, last_name, email, password } = req.body
@@ -180,7 +180,7 @@ const getUserById = async (req, res) => {
 	}
 }
 
-module.exports = {
+export default {
 	createUser,
 	loginUser,
 	verifyUser,
