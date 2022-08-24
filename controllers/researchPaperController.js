@@ -1,9 +1,11 @@
 import { ObjectId } from 'mongodb'
 import ResearchPaper from '../models/ResearchPaper.js'
 import User from '../models/User.js'
-import { create } from'ipfs-http-client'
+import dotenv from 'dotenv'
+import { v4 as uuidv4 } from 'uuid';
+dotenv.config()
 
-const ipfs = create({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
+
 
 const createResearchPaper = async (req, res) => {
     try {
@@ -231,7 +233,10 @@ const submitPaper = async (req, res) => {
         if (!user_id) {
             return res.json({ success: false, message: 'User Not Found.' })
         }
-        const researchPaper = await ResearchPaper.findOne({ _id: research_paper_id }).select('-published').select('')
+        const researchPaper = await ResearchPaper.findOne({ _id: research_paper_id })
+        if(researchPaper.published){
+            return res.json({ success: false, message: 'Research Paper Already Published.' })
+        }
         const user = await User.findOne({ _id: user_id })
         if (!user) {
             return res.json({ success: false, message: 'User Not Found.' })
@@ -245,12 +250,11 @@ const submitPaper = async (req, res) => {
                 message: 'You Do Not Have Permission To View This Research Paper.'
             })
         }
-        console.log(JSON.stringify(researchPaper))
-
-        const { cid } = await ipfs.add(JSON.stringify(researchPaper))
-        if (!cid) {
-            return res.json({ success: false, message: 'Error Uploading Paper To IPFS.' })
-        }
+        // const cid = await client.put(Buffer.from('Hello'))
+        // if (!cid) {
+        //     return res.json({ success: false, message: 'Error Uploading Paper To IPFS.' })
+        // }
+        const cid = uuidv4()
         const updateResearchPaper = await ResearchPaper.updateOne(
             { _id: research_paper_id },
             { $set: { cid: cid, published: true } }
