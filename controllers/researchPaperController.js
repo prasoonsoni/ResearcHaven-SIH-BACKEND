@@ -278,11 +278,26 @@ const submitPaper = async (req, res) => {
         res.json({ success: false, message: 'Some Internal Server Error Occured.' })
     }
 }
+const getPublishedResearchPaperById = async(req, res)=>{
+    try {
+        const cid = req.params.cid
+        const researchPaper = await ResearchPaper.findOne({ cid })
+        if (!researchPaper) {
+            return res.json({ success: false, message: 'Research Paper Not Found.' })
+        }
+        return res.json({ success: true, message: "Research Paper Fetched Successfully", data: researchPaper })
+    } catch (error) {
+        console.log(error.message)
+        res.json({ success: false, message: 'Some Internal Server Error Occured.' })
+    }
+}
+
 export default {
     createResearchPaper,
     editResearchPaper,
     deleteResearchPaper,
     getAllPublishedResearchPapers,
+    getPublishedResearchPaperById,
     getAllPublishedResearchPapersByUser,
     getDraftResearchPapers,
     getDraftById,
