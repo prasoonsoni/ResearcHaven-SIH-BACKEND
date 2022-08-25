@@ -149,7 +149,7 @@ const deleteResearchProposal = async (req, res) => {
 
 const getAllSubmittedResearchProposals = async (req, res) => {
     try {
-        const researchProposals = await ResearchProposal.find({ submitted: true })
+        const researchProposals = await ResearchProposal.find({ submitted: true, funded: false })
         return res.json({ success: true, message: "Research Proposals Fetched Successfully", data: researchProposals })
     } catch (error) {
         console.log(error.message)
@@ -163,7 +163,7 @@ const getAllSubmittedResearchProposalsByUser = async (req, res) => {
         if (!user_id) {
             return res.json({ success: false, message: 'User Not Found.' })
         }
-        const researchProposals = await ResearchProposal.find({ user_id, submitted: true })
+        const researchProposals = await ResearchProposal.find({ user_id, submitted: true, funded: false })
         return res.json({ success: true, message: "Research Proposal Fetched Successfully", data: researchProposals })
     } catch (error) {
         console.log(error.message)

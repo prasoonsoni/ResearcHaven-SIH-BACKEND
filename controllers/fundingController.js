@@ -93,6 +93,17 @@ const getAllFundedProposalsByUser = async (req, res) => {
     }
 }
 
+const rejectFunding = async (req, res) => {
+    try {
+        
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            message: 'Some Internal Server Error Occured.'
+        })
+    }
+}
 
 export default {
     giveFunding,
