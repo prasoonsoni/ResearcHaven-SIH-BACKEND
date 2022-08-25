@@ -36,9 +36,9 @@ const levelOne = async (req, res) => {
                         og_literature_review: allPublishedProposals[i].literature_review
                     },
                     sus: {
-                        sus_keywords: allPublishedProposals.keywords,
-                        sus_bibliography: allPublishedProposals.bibliography,
-                        sus_literature_review: allPublishedProposals.literature_review
+                        sus_keywords: research_proposal.keywords,
+                        sus_bibliography: research_proposal.bibliography,
+                        sus_literature_review: research_proposal.literature_review
                     },
                     type: 0
                 })
@@ -86,6 +86,7 @@ const levelTwo = async (req, res) => {
         const allPublishedProposals = await ResearchProposal.find({ submitted: true, _id: { $ne: research_proposal_id } })
         const plagiarismReport = []
         for (let i = 0; i < allPublishedProposals.length; i++) {
+            console.log(allPublishedProposals[i])
             const result = await fetch('https://sih-nlp.herokuapp.com/checkplagiarism/', {
                 method: 'POST',
                 headers: {
@@ -100,11 +101,11 @@ const levelTwo = async (req, res) => {
                         og_proposed_method: allPublishedProposals[i].methodology
                     },
                     sus: {
-                        sus_title: allPublishedProposals.title,
-                        sus_ps_obj: allPublishedProposals.problem_statement_and_objectives,
-                        sus_introduction: allPublishedProposals.introduction,
-                        sus_keywords: allPublishedProposals.keywords,
-                        sus_proposed_method: allPublishedProposals.methodology
+                        sus_title: research_proposal.title,
+                        sus_ps_obj: research_proposal.problem_statement_and_objectives,
+                        sus_introduction: research_proposal.introduction,
+                        sus_keywords: research_proposal.keywords,
+                        sus_proposed_method: research_proposal.methodology
                     },
                     type: 0
                 })
