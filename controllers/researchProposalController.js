@@ -22,6 +22,7 @@ const createResearchProposal = async (req, res) => {
             bibliography
         } = req.body
         const researchProposal = await ResearchProposal.create({
+            user_id,
             title,
             researchers,
             keywords,
