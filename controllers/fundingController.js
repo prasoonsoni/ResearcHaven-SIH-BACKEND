@@ -1,5 +1,6 @@
 import Funding from '../models/Funding.js'
 import ResearchProposal from '../models/ResearchProposal.js'
+import RejectedProposals from '../models/RejectedProposals.js'
 import User from '../models/User.js'
 import { ObjectId } from 'mongodb'
 import sendWhatsappMessage from '../scripts/sendWhatsappMessage.js'
@@ -95,6 +96,44 @@ const getAllFundedProposalsByUser = async (req, res) => {
 
 const rejectFunding = async (req, res) => {
     try {
+        const research_proposal_cid = req.params.cid
+        const { reason } = req.body
+        const research_proposal = await ResearchProposal.findOne({ cid: research_proposal_cid })
+        if (!research_proposal) {
+            return res.json({ success: false, message: 'Research Proposal Not Found.' })
+        }
+        if (!research_proposal.submitted) {
+            return res.json({ success: false, message: 'Research Proposal Not Submitted.' })
+        }
+        if (research_proposal.funded) {
+            return res.json({ success: false, message: 'Research Proposal Already Funded.' })
+        }
+        const user_id = new ObjectId(research_proposal.user_id)
+        const user = await User.findOne({ _id: user_id })
+        if (!user) {
+            return res.json({ success: false, message: 'User Not Found.' })
+        }
+        const createRejection = await RejectedProposals.create({
+            data: research_proposal,
+            reason: reason
+        })
+        if (!createRejection) {
+            return res.json({ success: false, message: 'Rejection Failed.' })
+        }
+        const deleteFromSubmitted = await ResearchProposal.deleteOne({ _id: research_proposal._id })
+        if (!deleteFromSubmitted.acknowledged) {
+            return res.json({ success: false, message: 'Rejection Failed.' })
+        }
+        const deleteFromUser = await User.updateOne({ _id: user._id }, { $pull: { submitted_research_proposals: research_proposal_cid } })
+        if (!deleteFromUser.acknowledged) {
+            return res.json({ success: false, message: 'Rejection Failed.' })
+        }
+        const message = await sendWhatsappMessage("91" + user.whatsapp_number, user.first_name + " " + user.last_name, research_proposal.title, research_proposal.cid, 'proposal_rejected')
+        if (message.error !== undefined) {
+            console.log(message.error)
+            return res.json({ success: true, message: "Proposal rejected but error sending message." })
+        }
+        return res.json({ success: true, message: 'Rejected Successfully.' })
 
     } catch (error) {
         console.log(error)
@@ -108,5 +147,6 @@ const rejectFunding = async (req, res) => {
 export default {
     giveFunding,
     getAllFundedProposals,
-    getAllFundedProposalsByUser
+    getAllFundedProposalsByUser,
+    rejectFunding
 }
