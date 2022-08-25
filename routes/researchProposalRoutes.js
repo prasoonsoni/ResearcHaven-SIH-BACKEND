@@ -9,7 +9,7 @@ router.delete('/delete/:id', fetchUser, researchProposalController.deleteResearc
 router.get('/submitted', researchProposalController.getAllSubmittedResearchProposals)
 router.get('/submitted/:cid', researchProposalController.getSubmittedResearchProposalById)
 router.get('/submitted-by-user', fetchUser, researchProposalController.getAllSubmittedResearchProposalsByUser)
-router.get('/draft-research-proposals', fetchUser, researchProposalController.getDraftResearchProposals)
+router.get('/draft', fetchUser, researchProposalController.getDraftResearchProposals)
 router.get('/draft/:id', fetchUser, researchProposalController.getDraftById)
 router.post('/submit/:id', fetchUser, researchProposalController.submitProposal)
 
