@@ -21,7 +21,7 @@ const levelOne = async (req, res) => {
         if (user._id.toString() !== research_proposal.user_id.toString()) {
             return res.json({ success: false, message: 'You are not authorized to access this resource.' })
         }
-        const allPublishedProposals = await ResearchProposal.find({ submitted: true, _id: { $ne: research_proposal_id } })
+        const allPublishedProposals = await ResearchProposal.find({ funded: true, _id: { $ne: research_proposal_id } })
         const plagiarismReport = []
         for (let i = 0; i < allPublishedProposals.length; i++) {
             const result = await fetch('https://sih-nlp.herokuapp.com/level1plagiarism/', {
@@ -83,7 +83,7 @@ const levelTwo = async (req, res) => {
         if (user._id.toString() !== research_proposal.user_id.toString()) {
             return res.json({ success: false, message: 'You are not authorized to access this resource.' })
         }
-        const allPublishedProposals = await ResearchProposal.find({ submitted: true, _id: { $ne: research_proposal_id } })
+        const allPublishedProposals = await ResearchProposal.find({ funded: true, _id: { $ne: research_proposal_id } })
         const plagiarismReport = []
         for (let i = 0; i < allPublishedProposals.length; i++) {
             console.log(allPublishedProposals[i])
