@@ -23,6 +23,7 @@ const levelOne = async (req, res) => {
         }
         const allPublishedProposals = await ResearchProposal.find({ funded: true, _id: { $ne: research_proposal_id } })
         const plagiarismReport = []
+        let sum = 0;
         for (let i = 0; i < allPublishedProposals.length; i++) {
             const result = await fetch('https://sih-nlp.herokuapp.com/level1plagiarism/', {
                 method: 'POST',
@@ -44,6 +45,7 @@ const levelOne = async (req, res) => {
                 })
             })
             const data = await result.json()
+            sum += data.level1_check * 100
             const report = { id: allPublishedProposals[i].cid, plagiarism: data.level1_check * 100 }
             plagiarismReport.push(report)
         }
@@ -51,12 +53,14 @@ const levelOne = async (req, res) => {
             user_id: user_id,
             research_proposal_id: research_proposal_id,
             level: 1,
+            created_at: Date.now(),
+            mean: sum / allPublishedProposals.length,
             report: plagiarismReport
         })
         if (!createReport) {
             return res.json({ success: false, message: 'Error creating report.' })
         }
-        return res.json({ success: true, message: 'Level 1 Plagiarism report generated successfully.', data: plagiarismReport })
+        return res.json({ success: true, message: 'Level 1 Plagiarism report generated successfully.', data: plagiarismReport, mean: sum / allPublishedProposals.length })
 
     } catch (error) {
         console.log(error)
@@ -85,8 +89,8 @@ const levelTwo = async (req, res) => {
         }
         const allPublishedProposals = await ResearchProposal.find({ funded: true, _id: { $ne: research_proposal_id } })
         const plagiarismReport = []
+        let sum = 0;
         for (let i = 0; i < allPublishedProposals.length; i++) {
-            console.log(allPublishedProposals[i])
             const result = await fetch('https://sih-nlp.herokuapp.com/checkplagiarism/', {
                 method: 'POST',
                 headers: {
@@ -111,19 +115,22 @@ const levelTwo = async (req, res) => {
                 })
             })
             const data = await result.json()
-            const report = { id: allPublishedProposals[i].cid, plagiarism: data.similarity_score * 100 }
+            sum += data.similarity_score * 100
+            const report = { id: allPublishedProposals[i].cid, plagiarism: data.similarity_score * 100, }
             plagiarismReport.push(report)
         }
         const createReport = await PlagiarismReport.create({
             user_id: user_id,
             research_proposal_id: research_proposal_id,
             level: 2,
+            created_at: Date.now(),
+            mean: sum / allPublishedProposals.length,
             report: plagiarismReport
         })
         if (!createReport) {
             return res.json({ success: false, message: 'Error creating report.' })
         }
-        return res.json({ success: true, message: 'Level 2 Plagiarism report generated successfully.', data: plagiarismReport })
+        return res.json({ success: true, message: 'Level 2 Plagiarism report generated successfully.', data: plagiarismReport, mean: sum / allPublishedProposals.length })
     } catch (error) {
         console.log(error)
         console.log(error.message)
