@@ -2,6 +2,7 @@ import Funding from '../models/Funding.js'
 import ResearchProposal from '../models/ResearchProposal.js'
 import User from '../models/User.js'
 import { ObjectId } from 'mongodb'
+import sendWhatsappMessage from '../scripts/sendWhatsappMessage.js'
 
 const giveFunding = async (req, res) => {
     try {
@@ -41,6 +42,11 @@ const giveFunding = async (req, res) => {
         if (!updateUser.acknowledged) {
             return res.json({ success: false, message: 'Funding Not Created.' })
         }
+        const message = await sendWhatsappMessage("91" + user.whatsapp_number, user.first_name + " " + user.last_name, research_proposal.title, research_proposal.cid, 'proposal_funded')
+        if (message.error !== undefined) {
+            console.log(message.error)
+            return res.json({ success: false, message: "Proposal submitted but error sending message." })
+        }
         return res.json({ success: true, message: 'Funding Created Successfully.' })
     } catch (error) {
         console.log(error)
@@ -70,7 +76,7 @@ const getAllFundedProposals = async (req, res) => {
 const getAllFundedProposalsByUser = async (req, res) => {
     try {
         const user_id = new ObjectId(req.user._id)
-        if(!user_id) {
+        if (!user_id) {
             return res.json({ success: false, message: 'User Not Found.' })
         }
         const fundedProposals = await ResearchProposal.find({ user_id: user_id, funded: true })
@@ -86,6 +92,8 @@ const getAllFundedProposalsByUser = async (req, res) => {
         })
     }
 }
+
+
 export default {
     giveFunding,
     getAllFundedProposals,
