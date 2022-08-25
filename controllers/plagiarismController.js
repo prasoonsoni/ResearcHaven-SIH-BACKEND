@@ -49,6 +49,9 @@ const levelOne = async (req, res) => {
             level: 1,
             report: plagiarismReport
         })
+        if(!createReport) {
+            return res.json({ success: false, message: 'Error creating report.' })
+        }
         return res.json({ success: true, message: 'Level 1 Plagiarism report generated successfully.', data: plagiarismReport })
 
     } catch (error) {
@@ -109,6 +112,15 @@ const levelTwo = async (req, res) => {
             const data = await result.json()
             const report = { id: allPublishedPapers[i].cid, plagiarism: data.similarity_score * 100 }
             plagiarismReport.push(report)
+        }
+        const createReport = await PlagiarismReport.create({
+            user_id: user_id,
+            research_paper_id: research_paper_id,
+            level: 2,
+            report: plagiarismReport
+        })
+        if(!createReport) {
+            return res.json({ success: false, message: 'Error creating report.' })
         }
         return res.json({ success: true, message: 'Level 2 Plagiarism report generated successfully.', data: plagiarismReport })
     } catch (error) {
