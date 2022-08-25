@@ -223,6 +223,9 @@ const submitProposal = async (req, res) => {
             return res.json({ success: false, message: 'User Not Found.' })
         }
         const researchProposal = await ResearchProposal.findOne({ _id: research_proposal_id })
+        if(!researchProposal) {
+            return res.json({ success: false, message: 'Research Proposal Not Found.' })
+        }
         if (researchProposal.submitted) {
             return res.json({ success: false, message: 'Research Proposal Already Submitted.' })
         }
