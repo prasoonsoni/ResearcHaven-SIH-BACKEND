@@ -134,7 +134,7 @@ const deleteResearchProposal = async (req, res) => {
         }
         const updateUser = await User.updateOne(
             { _id: user_id },
-            { $pull: { research_Proposals: research_proposal_id } }
+            { $pull: { research_proposals: research_proposal_id } }
         )
         if (!updateUser.acknowledged) {
             return res.json({ success: false, message: 'Error Updating User.' })
