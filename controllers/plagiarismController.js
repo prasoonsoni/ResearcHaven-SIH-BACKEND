@@ -3,6 +3,7 @@ import ResearchPaper from '../models/ResearchPaper.js'
 import { ObjectId } from 'mongodb'
 import fetch from 'node-fetch'
 import dotenv from 'dotenv'
+import PlagiarismReport from '../models/PlagiarismReport.js'
 dotenv.config()
 
 const levelOne = async (req, res) => {
