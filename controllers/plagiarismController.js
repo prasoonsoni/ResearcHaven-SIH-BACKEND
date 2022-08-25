@@ -49,7 +49,7 @@ const levelOne = async (req, res) => {
             level: 1,
             report: plagiarismReport
         })
-        if(!createReport) {
+        if (!createReport) {
             return res.json({ success: false, message: 'Error creating report.' })
         }
         return res.json({ success: true, message: 'Level 1 Plagiarism report generated successfully.', data: plagiarismReport })
@@ -119,7 +119,7 @@ const levelTwo = async (req, res) => {
             level: 2,
             report: plagiarismReport
         })
-        if(!createReport) {
+        if (!createReport) {
             return res.json({ success: false, message: 'Error creating report.' })
         }
         return res.json({ success: true, message: 'Level 2 Plagiarism report generated successfully.', data: plagiarismReport })
@@ -133,7 +133,38 @@ const levelTwo = async (req, res) => {
     }
 }
 
+const getLevelOneReport = async (req, res) => {
+    try {
+        const user_id = new ObjectId(req.user._id)
+        const research_paper_id = new ObjectId(req.params.id)
+        const user = await User.findOne({ _id: user_id })
+        const research_paper = await ResearchPaper.findOne({ _id: research_paper_id })
+        if (!user) {
+            return res.json({ success: false, message: 'User Not Found.' })
+        }
+        if (!research_paper) {
+            return res.json({ success: false, message: 'Research Paper Not Found.' })
+        }
+        if (user._id.toString() !== research_paper.user_id.toString()) {
+            return res.json({ success: false, message: 'You are not authorized to access this resource.' })
+        }
+        const report = await PlagiarismReport.find({ user_id: user_id, research_paper_id: research_paper_id, level: 1 })
+        if (!report) {
+            return res.json({ success: false, message: 'Report Not Found.' })
+        }
+        return res.json({ success: true, message: 'Level 1 Plagiarism report found successfully.', data: report })
+
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            message: 'Some Internal Server Error Occured.'
+        })
+    }
+}
+
 export default {
     levelOne,
-    levelTwo
+    levelTwo,
+    getLevelOneReport
 }
