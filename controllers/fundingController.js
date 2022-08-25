@@ -45,7 +45,7 @@ const giveFunding = async (req, res) => {
         const message = await sendWhatsappMessage("91" + user.whatsapp_number, user.first_name + " " + user.last_name, research_proposal.title, research_proposal.cid, 'proposal_funded')
         if (message.error !== undefined) {
             console.log(message.error)
-            return res.json({ success: false, message: "Proposal submitted but error sending message." })
+            return res.json({ success: true, message: "Proposal submitted but error sending message." })
         }
         return res.json({ success: true, message: 'Funding Created Successfully.' })
     } catch (error) {
@@ -95,7 +95,7 @@ const getAllFundedProposalsByUser = async (req, res) => {
 
 const rejectFunding = async (req, res) => {
     try {
-        
+
     } catch (error) {
         console.log(error)
         res.json({
