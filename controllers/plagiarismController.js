@@ -133,7 +133,7 @@ const levelTwo = async (req, res) => {
     }
 }
 
-const getLevelOneReport = async (req, res) => {
+const getLevelOneReports = async (req, res) => {
     try {
         const user_id = new ObjectId(req.user._id)
         const research_paper_id = new ObjectId(req.params.id)
@@ -166,5 +166,5 @@ const getLevelOneReport = async (req, res) => {
 export default {
     levelOne,
     levelTwo,
-    getLevelOneReport
+    getLevelOneReports
 }
