@@ -1,5 +1,5 @@
 import User from '../models/User.js'
-import ResearchPaper from '../models/ResearchPaper.js'
+import ResearchProposal from '../models/ResearchProposal.js'
 import { ObjectId } from 'mongodb'
 import fetch from 'node-fetch'
 import dotenv from 'dotenv'
@@ -9,21 +9,21 @@ dotenv.config()
 const levelOne = async (req, res) => {
     try {
         const user_id = new ObjectId(req.user._id)
-        const research_paper_id = new ObjectId(req.params.id)
+        const research_proposal_id = new ObjectId(req.params.id)
         const user = await User.findOne({ _id: user_id })
-        const research_paper = await ResearchPaper.findOne({ _id: research_paper_id })
+        const research_proposal = await ResearchProposal.findOne({ _id: research_proposal_id })
         if (!user) {
             return res.json({ success: false, message: 'User Not Found.' })
         }
-        if (!research_paper) {
-            return res.json({ success: false, message: 'Research Paper Not Found.' })
+        if (!research_proposal) {
+            return res.json({ success: false, message: 'Research Proposal Not Found.' })
         }
-        if (user._id.toString() !== research_paper.user_id.toString()) {
+        if (user._id.toString() !== research_proposal.user_id.toString()) {
             return res.json({ success: false, message: 'You are not authorized to access this resource.' })
         }
-        const allPublishedPapers = await ResearchPaper.find({ published: true, _id: { $ne: research_paper_id } })
+        const allPublishedProposals = await ResearchProposal.find({ published: true, _id: { $ne: research_proposal_id } })
         const plagiarismReport = []
-        for (let i = 0; i < allPublishedPapers.length; i++) {
+        for (let i = 0; i < allPublishedProposals.length; i++) {
             const result = await fetch('https://sih-nlp.herokuapp.com/referencesplagiarism/', {
                 method: 'POST',
                 headers: {
@@ -31,21 +31,21 @@ const levelOne = async (req, res) => {
                 },
                 body: JSON.stringify({
                     og: {
-                        og_reference: allPublishedPapers[i].references,
+                        og_reference: allPublishedProposals[i].references,
                     },
                     sus: {
-                        sus_reference: research_paper.references
+                        sus_reference: research_proposal.references
                     },
                     type: 1
                 })
             })
             const data = await result.json()
-            const report = { id: allPublishedPapers[i].cid, plagiarism: data.references_plag_check * 100 }
+            const report = { id: allPublishedProposals[i].cid, plagiarism: data.references_plag_check * 100 }
             plagiarismReport.push(report)
         }
         const createReport = await PlagiarismReport.create({
             user_id: user_id,
-            research_paper_id: research_paper_id,
+            research_proposal_id: research_proposal_id,
             level: 1,
             report: plagiarismReport
         })
@@ -67,21 +67,21 @@ const levelOne = async (req, res) => {
 const levelTwo = async (req, res) => {
     try {
         const user_id = new ObjectId(req.user._id)
-        const research_paper_id = new ObjectId(req.params.id)
+        const research_proposal_id = new ObjectId(req.params.id)
         const user = await User.findOne({ _id: user_id })
-        const research_paper = await ResearchPaper.findOne({ _id: research_paper_id })
+        const research_proposal = await ResearchProposal.findOne({ _id: research_proposal_id })
         if (!user) {
             return res.json({ success: false, message: 'User Not Found.' })
         }
-        if (!research_paper) {
-            return res.json({ success: false, message: 'Research Paper Not Found.' })
+        if (!research_proposal) {
+            return res.json({ success: false, message: 'Research Proposal Not Found.' })
         }
-        if (user._id.toString() !== research_paper.user_id.toString()) {
+        if (user._id.toString() !== research_proposal.user_id.toString()) {
             return res.json({ success: false, message: 'You are not authorized to access this resource.' })
         }
-        const allPublishedPapers = await ResearchPaper.find({ published: true, _id: { $ne: research_paper_id } })
+        const allPublishedProposals = await ResearchProposal.find({ published: true, _id: { $ne: research_proposal_id } })
         const plagiarismReport = []
-        for (let i = 0; i < allPublishedPapers.length; i++) {
+        for (let i = 0; i < allPublishedProposals.length; i++) {
             const result = await fetch('https://sih-nlp.herokuapp.com/checkplagiarism/', {
                 method: 'POST',
                 headers: {
@@ -89,33 +89,33 @@ const levelTwo = async (req, res) => {
                 },
                 body: JSON.stringify({
                     og: {
-                        og_title: allPublishedPapers[i].title,
-                        og_abstract: allPublishedPapers[i].abstract,
-                        og_introduction: allPublishedPapers[i].introduction,
-                        og_keywords: allPublishedPapers[i].keywords,
-                        og_proposed_method: allPublishedPapers[i].methodology,
-                        og_evaluation_result: allPublishedPapers[i].experimental_evaluation,
-                        og_conclusion: allPublishedPapers[i].conclusion,
+                        og_title: allPublishedProposals[i].title,
+                        og_abstract: allPublishedProposals[i].abstract,
+                        og_introduction: allPublishedProposals[i].introduction,
+                        og_keywords: allPublishedProposals[i].keywords,
+                        og_proposed_method: allPublishedProposals[i].methodology,
+                        og_evaluation_result: allPublishedProposals[i].experimental_evaluation,
+                        og_conclusion: allPublishedProposals[i].conclusion,
                     },
                     sus: {
-                        sus_title: research_paper.title,
-                        sus_abstract: research_paper.abstract,
-                        sus_introduction: research_paper.introduction,
-                        sus_keywords: research_paper.keywords,
-                        sus_proposed_method: research_paper.methodology,
-                        sus_evaluation_result: research_paper.experimental_evaluation,
-                        sus_conclusion: research_paper.conclusion,
+                        sus_title: research_proposal.title,
+                        sus_abstract: research_proposal.abstract,
+                        sus_introduction: research_proposal.introduction,
+                        sus_keywords: research_proposal.keywords,
+                        sus_proposed_method: research_proposal.methodology,
+                        sus_evaluation_result: research_proposal.experimental_evaluation,
+                        sus_conclusion: research_proposal.conclusion,
                     },
                     type: 0
                 })
             })
             const data = await result.json()
-            const report = { id: allPublishedPapers[i].cid, plagiarism: data.similarity_score * 100 }
+            const report = { id: allPublishedProposals[i].cid, plagiarism: data.similarity_score * 100 }
             plagiarismReport.push(report)
         }
         const createReport = await PlagiarismReport.create({
             user_id: user_id,
-            research_paper_id: research_paper_id,
+            research_proposal_id: research_proposal_id,
             level: 2,
             report: plagiarismReport
         })
@@ -136,19 +136,19 @@ const levelTwo = async (req, res) => {
 const getLevelOneReports = async (req, res) => {
     try {
         const user_id = new ObjectId(req.user._id)
-        const research_paper_id = new ObjectId(req.params.id)
+        const research_proposal_id = new ObjectId(req.params.id)
         const user = await User.findOne({ _id: user_id })
-        const research_paper = await ResearchPaper.findOne({ _id: research_paper_id })
+        const research_proposal = await ResearchProposal.findOne({ _id: research_proposal_id })
         if (!user) {
             return res.json({ success: false, message: 'User Not Found.' })
         }
-        if (!research_paper) {
+        if (!research_proposal) {
             return res.json({ success: false, message: 'Research Paper Not Found.' })
         }
-        if (user._id.toString() !== research_paper.user_id.toString()) {
+        if (user._id.toString() !== research_proposal.user_id.toString()) {
             return res.json({ success: false, message: 'You are not authorized to access this resource.' })
         }
-        const report = await PlagiarismReport.find({ user_id: user_id, research_paper_id: research_paper_id, level: 1 })
+        const report = await PlagiarismReport.find({ user_id: user_id, research_proposal_id: research_proposal_id, level: 1 })
         if (!report) {
             return res.json({ success: false, message: 'Report Not Found.' })
         }
@@ -166,19 +166,19 @@ const getLevelOneReports = async (req, res) => {
 const getLevelTwoReports = async (req, res) => {
     try {
         const user_id = new ObjectId(req.user._id)
-        const research_paper_id = new ObjectId(req.params.id)
+        const research_proposal_id = new ObjectId(req.params.id)
         const user = await User.findOne({ _id: user_id })
-        const research_paper = await ResearchPaper.findOne({ _id: research_paper_id })
+        const research_proposal = await ResearchProposal.findOne({ _id: research_proposal_id })
         if (!user) {
             return res.json({ success: false, message: 'User Not Found.' })
         }
-        if (!research_paper) {
+        if (!research_proposal) {
             return res.json({ success: false, message: 'Research Paper Not Found.' })
         }
-        if (user._id.toString() !== research_paper.user_id.toString()) {
+        if (user._id.toString() !== research_proposal.user_id.toString()) {
             return res.json({ success: false, message: 'You are not authorized to access this resource.' })
         }
-        const report = await PlagiarismReport.find({ user_id: user_id, research_paper_id: research_paper_id, level: 2 })
+        const report = await PlagiarismReport.find({ user_id: user_id, research_proposal_id: research_proposal_id, level: 2 })
         if (!report) {
             return res.json({ success: false, message: 'Report Not Found.' })
         }

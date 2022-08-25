@@ -3,7 +3,7 @@ import express from "express"
 import cors from "cors"
 import connectToDatabase from "./database/connection.js"
 import userRouter from "./routes/userRoutes.js"
-import researchPaperRouter from "./routes/researchPaperRoutes.js"
+import researchProposalRouter from "./routes/researchProposalRoutes.js"
 import plagiarismRouter from "./routes/plagiarismRoutes.js"
 
 const app = express()
@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/user', userRouter)
-app.use('/api/researchpaper', researchPaperRouter)
+app.use('/api/proposal', researchProposalRouter)
 app.use('/api/plagiarism', plagiarismRouter)
 
 app.listen(port, () => {
