@@ -130,6 +130,9 @@ const deleteResearchPaper = async (req, res) => {
             return res.json({ success: false, message: 'User Not Found.' })
         }
         const researchPaper = await ResearchPaper.findOne({ _id: research_paper_id })
+        if (researchPaper.published) {
+            return res.json({ success: false, message: 'You Cannot Delete A Published Research Paper.' })
+        }
         if (!researchPaper) {
             return res.json({ success: false, message: 'Research Paper Not Found.' })
         }
@@ -234,7 +237,7 @@ const submitPaper = async (req, res) => {
             return res.json({ success: false, message: 'User Not Found.' })
         }
         const researchPaper = await ResearchPaper.findOne({ _id: research_paper_id })
-        if(researchPaper.published){
+        if (researchPaper.published) {
             return res.json({ success: false, message: 'Research Paper Already Published.' })
         }
         const user = await User.findOne({ _id: user_id })
@@ -278,7 +281,7 @@ const submitPaper = async (req, res) => {
         res.json({ success: false, message: 'Some Internal Server Error Occured.' })
     }
 }
-const getPublishedResearchPaperById = async(req, res)=>{
+const getPublishedResearchPaperById = async (req, res) => {
     try {
         const cid = req.params.cid
         const researchPaper = await ResearchPaper.findOne({ cid })

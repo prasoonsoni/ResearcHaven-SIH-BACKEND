@@ -43,6 +43,12 @@ const levelOne = async (req, res) => {
             const report = { id: allPublishedPapers[i].cid, plagiarism: data.references_plag_check * 100 }
             plagiarismReport.push(report)
         }
+        const createReport = await PlagiarismReport.create({
+            user_id: user_id,
+            research_paper_id: research_paper_id,
+            level: 1,
+            report: plagiarismReport
+        })
         return res.json({ success: true, message: 'Level 1 Plagiarism report generated successfully.', data: plagiarismReport })
 
     } catch (error) {
