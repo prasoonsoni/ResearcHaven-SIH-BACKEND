@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb'
 import ResearchProposal from '../models/ResearchProposal.js'
 import User from '../models/User.js'
 import dotenv from 'dotenv'
+import sendWhatsappMessage from '../scripts/sendWhatsappMessage.js'
 import { v4 as uuidv4 } from 'uuid';
 dotenv.config()
 
@@ -263,6 +264,11 @@ const submitProposal = async (req, res) => {
         )
         if (!updateUser.acknowledged) {
             return res.json({ success: false, message: 'Error Updating Research Proposal.' })
+        }
+        const message = await sendWhatsappMessage("91" + user.whatsapp_number, user.first_name + " " + user.last_name, researchProposal.title, cid, 'submit_proposal')
+        if (message.error !== undefined) {
+            console.log(message.error)
+            return res.json({ success: false, message: "Proposal submitted but error sending message." })
         }
         return res.json({ success: true, message: 'Proposal Uploaded Successfully.', data: cid })
     } catch (error) {
