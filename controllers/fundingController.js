@@ -14,7 +14,7 @@ const giveFunding = async (req, res) => {
         if (!research_proposal.submitted) {
             return res.json({ success: false, message: 'Research Proposal Not Submitted.' })
         }
-        if(research_proposal.funded) {
+        if (research_proposal.funded) {
             return res.json({ success: false, message: 'Research Proposal Already Funded.' })
         }
         const user_id = new ObjectId(research_proposal.user_id)
@@ -51,6 +51,22 @@ const giveFunding = async (req, res) => {
     }
 }
 
+const getAllFundedProposals = async (req, res) => {
+    try {
+        const fundedProposals = await ResearchProposal.find({ funded: true })
+        if (!fundedProposals) {
+            return res.json({ success: false, message: 'No Funded Proposals Found.' })
+        }
+        return res.json({ success: true, message: 'Funded Proposals Found Successfully.', data: fundedProposals })
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            message: 'Some Internal Server Error Occured.'
+        })
+    }
+}
 export default {
-    giveFunding
+    giveFunding,
+    getAllFundedProposals
 }
