@@ -21,26 +21,30 @@ const levelOne = async (req, res) => {
         if (user._id.toString() !== research_proposal.user_id.toString()) {
             return res.json({ success: false, message: 'You are not authorized to access this resource.' })
         }
-        const allPublishedProposals = await ResearchProposal.find({ published: true, _id: { $ne: research_proposal_id } })
+        const allPublishedProposals = await ResearchProposal.find({ submitted: true, _id: { $ne: research_proposal_id } })
         const plagiarismReport = []
         for (let i = 0; i < allPublishedProposals.length; i++) {
-            const result = await fetch('https://sih-nlp.herokuapp.com/referencesplagiarism/', {
+            const result = await fetch('https://sih-nlp.herokuapp.com/level1plagiarism/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     og: {
-                        og_reference: allPublishedProposals[i].references,
+                        og_keywords: allPublishedProposals[i].keywords,
+                        og_bibliography: allPublishedProposals[i].bibliography,
+                        og_literature_review: allPublishedProposals[i].literature_review
                     },
                     sus: {
-                        sus_reference: research_proposal.references
+                        sus_keywords: allPublishedProposals.keywords,
+                        sus_bibliography: allPublishedProposals.bibliography,
+                        sus_literature_review: allPublishedProposals.literature_review
                     },
-                    type: 1
+                    type: 0
                 })
             })
             const data = await result.json()
-            const report = { id: allPublishedProposals[i].cid, plagiarism: data.references_plag_check * 100 }
+            const report = { id: allPublishedProposals[i].cid, plagiarism: data.level1_check * 100 }
             plagiarismReport.push(report)
         }
         const createReport = await PlagiarismReport.create({
@@ -79,7 +83,7 @@ const levelTwo = async (req, res) => {
         if (user._id.toString() !== research_proposal.user_id.toString()) {
             return res.json({ success: false, message: 'You are not authorized to access this resource.' })
         }
-        const allPublishedProposals = await ResearchProposal.find({ published: true, _id: { $ne: research_proposal_id } })
+        const allPublishedProposals = await ResearchProposal.find({ submitted: true, _id: { $ne: research_proposal_id } })
         const plagiarismReport = []
         for (let i = 0; i < allPublishedProposals.length; i++) {
             const result = await fetch('https://sih-nlp.herokuapp.com/checkplagiarism/', {
@@ -90,21 +94,17 @@ const levelTwo = async (req, res) => {
                 body: JSON.stringify({
                     og: {
                         og_title: allPublishedProposals[i].title,
-                        og_abstract: allPublishedProposals[i].abstract,
+                        og_ps_obj: allPublishedProposals[i].problem_statement_and_objectives,
                         og_introduction: allPublishedProposals[i].introduction,
                         og_keywords: allPublishedProposals[i].keywords,
-                        og_proposed_method: allPublishedProposals[i].methodology,
-                        og_evaluation_result: allPublishedProposals[i].experimental_evaluation,
-                        og_conclusion: allPublishedProposals[i].conclusion,
+                        og_proposed_method: allPublishedProposals[i].methodology
                     },
                     sus: {
-                        sus_title: research_proposal.title,
-                        sus_abstract: research_proposal.abstract,
-                        sus_introduction: research_proposal.introduction,
-                        sus_keywords: research_proposal.keywords,
-                        sus_proposed_method: research_proposal.methodology,
-                        sus_evaluation_result: research_proposal.experimental_evaluation,
-                        sus_conclusion: research_proposal.conclusion,
+                        sus_title: allPublishedProposals.title,
+                        sus_ps_obj: allPublishedProposals.problem_statement_and_objectives,
+                        sus_introduction: allPublishedProposals.introduction,
+                        sus_keywords: allPublishedProposals.keywords,
+                        sus_proposed_method: allPublishedProposals.methodology
                     },
                     type: 0
                 })
