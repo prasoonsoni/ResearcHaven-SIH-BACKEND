@@ -149,7 +149,7 @@ const deleteResearchProposal = async (req, res) => {
 const getAllSubmittedResearchProposals = async (req, res) => {
     try {
         const researchProposals = await ResearchProposal.find({ submitted: true })
-        return res.json({ success: true, message: researchProposals })
+        return res.json({ success: true, message: "Research Proposals Fetched Successfully", data: researchProposals })
     } catch (error) {
         console.log(error.message)
         res.json({ success: false, message: 'Some Internal Server Error Occured.' })
@@ -223,7 +223,7 @@ const submitProposal = async (req, res) => {
             return res.json({ success: false, message: 'User Not Found.' })
         }
         const researchProposal = await ResearchProposal.findOne({ _id: research_proposal_id })
-        if(!researchProposal) {
+        if (!researchProposal) {
             return res.json({ success: false, message: 'Research Proposal Not Found.' })
         }
         if (researchProposal.submitted) {
