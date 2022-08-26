@@ -6,6 +6,7 @@ import userRouter from "./routes/userRoutes.js"
 import researchProposalRouter from "./routes/researchProposalRoutes.js"
 import plagiarismRouter from "./routes/plagiarismRoutes.js"
 import fundingRouter from "./routes/fundingRoutes.js"
+import expertRouter from "./routes/expertRoutes.js"
 
 const app = express()
 dotenv.config()
@@ -24,6 +25,7 @@ app.use('/api/user', userRouter)
 app.use('/api/proposal', researchProposalRouter)
 app.use('/api/plagiarism', plagiarismRouter)
 app.use('/api/funding', fundingRouter)
+app.use('/api/expert', expertRouter)
 
 app.listen(port, () => {
 	console.log(`Server listening on http://localhost:${port}`)
