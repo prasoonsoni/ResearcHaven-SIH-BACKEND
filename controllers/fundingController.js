@@ -1,8 +1,10 @@
 import Funding from '../models/Funding.js'
 import ResearchProposal from '../models/ResearchProposal.js'
 import RejectedProposals from '../models/RejectedProposals.js'
+import Expert from '../models/Expert.js'
 import User from '../models/User.js'
 import { ObjectId } from 'mongodb'
+
 import sendWhatsappMessage from '../scripts/sendWhatsappMessage.js'
 
 const giveFunding = async (req, res) => {
@@ -163,10 +165,41 @@ const getAllRejectedProposalsBuUser = async (req, res) => {
         })
     }
 }
+
+const sendToExperts = async (req, res) => {
+    try {
+        const research_proposal_cid = req.params.cid
+        const experts = await User.find({ type: 'expert' })
+        if (!experts) {
+            return res.json({ success: false, message: 'No Experts Found.' })
+        }
+        for (let i = 0; i < experts.length; i++) {
+            const checkIfAlreadySent = await ResearchProposal.findOne({ user_id: experts[i]._id, proposals: { $in: research_proposal_cid } })
+            if (!checkIfAlreadySent) {
+                const expert = await Expert.updateOne({ user_id: experts[i]._id }, { $push: { proposals: research_proposal_cid } })
+                if (!expert.acknowledged) {
+                    return res.json({ success: false, message: 'Error Sending Proposal to Experts.' })
+                }
+            } else {
+                return res.json({ success: false, message: 'Proposal Already Sent to Expert.' })
+            }
+
+        }
+        return res.json({ success: true, message: 'Sent to experts for verification' })
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            message: 'Some Internal Server Error Occured.'
+        })
+
+    }
+}
 export default {
     giveFunding,
     getAllFundedProposals,
     getAllFundedProposalsByUser,
     rejectFunding,
-    getAllRejectedProposalsBuUser
+    getAllRejectedProposalsBuUser,
+    sendToExperts
 }

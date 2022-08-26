@@ -13,6 +13,7 @@ const ResearchProposalSchema = new Schema({
 	methodology: { type: String, default: '' },
 	bibliography: { type: String, default: '' },
 	submitted: { type: Boolean, default: false },
+	verified: { type: Boolean, default: false },
 	funded: { type: Boolean, default: false },
 	created_at: { type: Number, default: Date.now() },
 	updated_at: { type: Number, default: Date.now() }
