@@ -96,7 +96,7 @@ const verifyUser = async (req, res) => {
 			})
 		}
 		return res.send(
-			"<h1>User Verified Successfully.</h1><p>You can now <a href='/login'>login</a>.</p>"
+			"<h1>User Verified Successfully.</h1><p>You can now <a href='https://webcrawlers.tech'>login</a>.</p>"
 		)
 	} catch (error) {
 		console.log(error.message)
