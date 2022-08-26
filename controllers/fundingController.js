@@ -207,13 +207,14 @@ const getAllScoresByCid = async (req, res) => {
         if (!research_proposal) {
             return res.json({ success: false, message: 'Research Proposal Not Found.' })
         }
-        const scores = await Score.find({ research_proposal_cid: research_proposal_cid })
+        const scores = await Score.find({ proposal_cid: research_proposal_cid })
         if (scores.length === 0) {
             return res.json({ success: false, message: 'No Scores Found.' })
         }
         const allScores = []
         for (let i = 0; i < scores.length; i++) {
             const score = scores[i];
+            console.log(score)
             const expert = await User.findOne({ _id: score.expert_id })
             const expert_name = expert.first_name + " " + expert.last_name
             score.name = expert_name
