@@ -17,7 +17,7 @@ const createResearchProposal = async (req, res) => {
             researchers,
             keywords,
             introduction,
-            problem_statements_and_objectives,
+            problem_statement_and_objectives,
             literature_review,
             methodology,
             bibliography
@@ -28,7 +28,7 @@ const createResearchProposal = async (req, res) => {
             researchers,
             keywords,
             introduction,
-            problem_statements_and_objectives,
+            problem_statement_and_objectives,
             literature_review,
             methodology,
             bibliography
@@ -75,7 +75,7 @@ const editResearchProposal = async (req, res) => {
             researchers,
             keywords,
             introduction,
-            problem_statements_and_objectives,
+            problem_statement_and_objectives,
             literature_review,
             methodology,
             bibliography
@@ -88,7 +88,7 @@ const editResearchProposal = async (req, res) => {
                     researchers,
                     keywords,
                     introduction,
-                    problem_statements_and_objectives,
+                    problem_statement_and_objectives,
                     literature_review,
                     methodology,
                     bibliography,
