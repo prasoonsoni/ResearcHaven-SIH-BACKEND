@@ -3,6 +3,7 @@ import ResearchProposal from '../models/ResearchProposal.js'
 import RejectedProposals from '../models/RejectedProposals.js'
 import Expert from '../models/Expert.js'
 import User from '../models/User.js'
+import Score from '../models/Score.js'
 import { ObjectId } from 'mongodb'
 
 import sendWhatsappMessage from '../scripts/sendWhatsappMessage.js'
@@ -195,7 +196,44 @@ const sendToExperts = async (req, res) => {
             success: false,
             message: 'Some Internal Server Error Occured.'
         })
+    }
+}
 
+const getAllScoresByCid = async (req, res) => {
+    try {
+        const research_proposal_cid = req.params.cid
+        const research_proposal = await ResearchProposal.findOne({ cid: research_proposal_cid })
+        const user = await User.findOne({ _id: research_proposal.user_id })
+        if (!research_proposal) {
+            return res.json({ success: false, message: 'Research Proposal Not Found.' })
+        }
+        const scores = await Score.find({ research_proposal_cid: research_proposal_cid })
+        if (scores.length === 0) {
+            return res.json({ success: false, message: 'No Scores Found.' })
+        }
+        const allScores = []
+        for (let i = 0; i < scores.length; i++) {
+            const score = scores[i];
+            const expert = await User.findOne({ _id: score.expert_id })
+            const expert_name = expert.first_name + " " + expert.last_name
+            score.name = expert_name
+            const score_data = {
+                expert_name: expert_name,
+                expert_id: expert._id,
+                score1: score.score1,
+                score2: score.score2,
+                score3: score.score3,
+                comments: score.comments,
+            }
+            allScores.push(score_data)
+        }
+        return res.json({ success: true, message: 'Scores Found Successfully.', data: allScores })
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            message: 'Some Internal Server Error Occured.'
+        })
     }
 }
 export default {
@@ -204,5 +242,6 @@ export default {
     getAllFundedProposalsByUser,
     rejectFunding,
     getAllRejectedProposalsBuUser,
-    sendToExperts
+    sendToExperts,
+    getAllScoresByCid
 }

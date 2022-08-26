@@ -15,6 +15,7 @@ const ResearchProposalSchema = new Schema({
 	submitted: { type: Boolean, default: false },
 	verified: { type: Boolean, default: false },
 	funded: { type: Boolean, default: false },
+	funding_amount: { type: String, default: '' },
 	created_at: { type: Number, default: Date.now() },
 	updated_at: { type: Number, default: Date.now() }
 })
