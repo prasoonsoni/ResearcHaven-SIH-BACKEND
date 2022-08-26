@@ -174,14 +174,17 @@ const sendToExperts = async (req, res) => {
             return res.json({ success: false, message: 'No Experts Found.' })
         }
         for (let i = 0; i < experts.length; i++) {
-            const checkIfAlreadySent = await ResearchProposal.findOne({ user_id: experts[i]._id, proposals: { $in: research_proposal_cid } })
-            if (!checkIfAlreadySent) {
-                const expert = await Expert.updateOne({ user_id: experts[i]._id }, { $push: { proposals: research_proposal_cid } })
-                if (!expert.acknowledged) {
-                    return res.json({ success: false, message: 'Error Sending Proposal to Experts.' })
-                }
-            } else {
+            const expert = await Expert.findOne({ user_id: experts[i]._id })
+            if (expert.proposals.indexOf(research_proposal_cid) !== -1) {
                 return res.json({ success: false, message: 'Proposal Already Sent to Expert.' })
+            }
+            const proposal = await ResearchProposal.findOne({ cid: research_proposal_cid })
+            if (!proposal) {
+                return res.json({ success: false, message: 'Research Proposal Not Found.' })
+            }
+            const updateExpert = await Expert.updateOne({ user_id: experts[i]._id }, { $push: { proposals: research_proposal_cid } })
+            if (!updateExpert.acknowledged) {
+                return res.json({ success: false, message: 'Error Sending Proposal to Experts.' })
             }
 
         }
