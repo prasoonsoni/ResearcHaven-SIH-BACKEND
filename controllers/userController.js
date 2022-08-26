@@ -17,7 +17,7 @@ const createUser = async (req, res) => {
 			first_name,
 			last_name,
 			email,
-			whatsapp_number
+			whatsapp_number,
 			password: hashedPassword
 		})
 		if (!newUser) {
