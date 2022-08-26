@@ -9,6 +9,28 @@ const verifyProposal = async (req, res) => {
     try {
         const research_proposal_cid = req.params.cid
         const { score1, score2, score3, comments } = req.body
+        const expert_id = new ObjectId(req.user._id)
+        const createScore = await Score.create({
+            expert_id: expert_id,
+            proposal_cid: research_proposal_cid,
+            score1: score1,
+            score2: score2,
+            score3: score3,
+            comments: comments,
+            verified_at: Date.now()
+        })
+        if (!createScore) {
+            return res.json({ success: false, message: 'Cannot Verify.' })
+        }
+        const updateProposal = await ResearchProposal.updateOne({ cid: research_proposal_cid }, { $set: { verified: true } })
+        if (!updateProposal.acknowledged) {
+            return res.json({ success: false, message: 'Cannot Verify.' })
+        }
+        const updateExpert = await Expert.updateOne({ user_id: expert_id }, { $pull: { proposals: research_proposal_cid } })
+        if (!updateExpert.acknowledged) {
+            return res.json({ success: false, message: 'Cannot Verify' })
+        }
+        return res.json({ success: true, message: 'Verified Successfully.' })
 
     } catch (error) {
         console.log(error)
@@ -50,5 +72,5 @@ const getAllProposals = async (req, res) => {
 }
 
 export default {
-    getAllProposals
+    getAllProposals, verifyProposal
 }
