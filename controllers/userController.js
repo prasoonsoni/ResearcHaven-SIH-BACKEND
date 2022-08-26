@@ -7,7 +7,7 @@ import { ObjectId } from 'mongodb'
 dotenv.config()
 const createUser = async (req, res) => {
 	try {
-		const { first_name, last_name, email, password } = req.body
+		const { first_name, last_name, email, password,whatsapp_number } = req.body
 		const user = await User.findOne({ email })
 		if (user) {
 			return res.json({ success: false, message: 'User Already Exists.' })
@@ -17,6 +17,7 @@ const createUser = async (req, res) => {
 			first_name,
 			last_name,
 			email,
+			whatsapp_number
 			password: hashedPassword
 		})
 		if (!newUser) {
