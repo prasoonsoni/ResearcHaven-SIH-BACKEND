@@ -144,9 +144,29 @@ const rejectFunding = async (req, res) => {
     }
 }
 
+const getAllRejectedProposalsBuUser = async (req, res) => {
+    try {
+        const user_id = new ObjectId(req.user._id)
+        if (!user_id) {
+            return res.json({ success: false, message: 'User Not Found.' })
+        }
+        const rejectedProposals = await RejectedProposals.find({ 'data.user_id': user_id })
+        if (!rejectedProposals) {
+            return res.json({ success: false, message: 'No Rejected Proposals Found.' })
+        }
+        return res.json({ success: true, message: 'Rejected Proposals Found Successfully.', data: rejectedProposals })
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            message: 'Some Internal Server Error Occured.'
+        })
+    }
+}
 export default {
     giveFunding,
     getAllFundedProposals,
     getAllFundedProposalsByUser,
-    rejectFunding
+    rejectFunding,
+    getAllRejectedProposalsBuUser
 }

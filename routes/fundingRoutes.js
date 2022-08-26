@@ -7,5 +7,6 @@ router.post('/give/:cid', fetchUser, fundingController.giveFunding);
 router.get('/', fundingController.getAllFundedProposals);
 router.get('/user', fetchUser, fundingController.getAllFundedProposalsByUser);
 router.post('/reject/:cid', fetchUser, fundingController.rejectFunding);
+router.get('/rejected', fetchUser, fundingController.getAllRejectedProposalsBuUser);
 
 export default router;
